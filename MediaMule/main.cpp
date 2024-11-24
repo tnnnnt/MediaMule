@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
 				return 1;
 			}
 			if (!get_video_and_upload(get_video_python_script_path, video_path, biliup_exe_path, cookie_json_path, tags, logger)) {
-                logger->error("program failed, please submit issue to https://github.com/tnnnnt/MediaMule/issues");
+				logger->error("program failed, please submit issue to https://github.com/tnnnnt/MediaMule/issues");
 				return 3;
 			}
 			std::this_thread::sleep_for(std::chrono::minutes(time_interval));
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	else {
-        logger->error("invalid time mode");
+		logger->error("invalid time mode");
 		return 2;
 	}
 	return 0;
