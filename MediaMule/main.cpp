@@ -71,8 +71,8 @@ int main(int argc, char* argv[]) {
 	logger->info("MediaMule v{} start running", version);
 	const std::string biliup_exe_path = program_path + "/biliup.exe";
 	const std::string get_video_python_script_path = program_path + "/get_video.py";
-	const std::string cookie_json_path = program_path + "/cookie1.json";
-	const std::string config_json_path = program_path + "/config1.json";
+	const std::string cookie_json_path = program_path + "/cookie.json";
+	const std::string config_json_path = program_path + "/config.json";
 	logger->info("start check file integrity");
 	std::vector<std::string> miss_file_paths;
 	if (!are_files_exist({ biliup_exe_path ,get_video_python_script_path ,cookie_json_path ,config_json_path }, miss_file_paths)) {
