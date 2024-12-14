@@ -15,14 +15,6 @@ def download_video(u, path):
 
 
 def get_video_0():
-	url = 'https://api.kuleu.com/api/xjj?type=json'
-	response = requests.get(url)
-	js = response.json()
-	if js['code'] == 200:
-		return download_video(js['video'], video_path)
-
-
-def get_video_1():
 	url = 'https://api.kuleu.com/api/MP4_xiaojiejie?type=json'
 	response = requests.get(url)
 	js = response.json()
@@ -34,5 +26,5 @@ if __name__ == "__main__":
 	args = sys.argv
 	video_path = args[1]
 	while True:
-		if get_video_0() or get_video_1():
+		if get_video_0():
 			break
