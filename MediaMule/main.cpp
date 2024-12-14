@@ -40,14 +40,16 @@ static int get_sleep_duration(const std::vector<std::string>& time_list) {
 	}
 	return 24 * 60 - current_minutes + times_in_minutes.front();
 }
-static bool get_video_and_upload(const std::string& get_video_python_script_path, const std::string& video_path, const std::string& biliup_exe_path, const std::string& cookie_json_path, const std::string& tags, std::shared_ptr<spdlog::logger>&logger) {
+static bool get_video_and_upload(const std::string& get_video_python_script_path, const std::string& video_path, const std::string& biliup_exe_path, const std::string& cookie_json_path, const std::string& tags, const std::vector<std::string>& titles, std::shared_ptr<spdlog::logger>&logger) {
 	logger->info("getting video");
 	std::string cmd = "python \"" + get_video_python_script_path + "\" \"" + video_path + "\"";
 	if (system(cmd.c_str())) {
 		return false;
 	}
     logger->info("uploading video");
-	cmd = biliup_exe_path + " --user-cookie \"" + cookie_json_path + "\" upload --copyright 1 --tag \"" + tags + "\" --title " + get_timestamp() + " \"" + video_path + "\"";
+	const std::string timestamp = get_timestamp();
+	const std::string title = titles[std::stoi(timestamp) % titles.size()];
+	cmd = biliup_exe_path + " --user-cookie \"" + cookie_json_path + "\" upload --copyright 1 --tag \"" + tags + "\" --title \"" + title + "\t"+ timestamp + "\" \"" + video_path + "\"";
 	if (system(cmd.c_str())) {
 		return false;
 	}
@@ -62,7 +64,7 @@ static bool are_files_exist(const std::vector<std::string>& file_paths, std::vec
 	return miss_file_paths.empty();
 }
 int main(int argc, char* argv[]) {
-	const std::string version = "2024.11.24";
+	const std::string version = "2024.12.14";
 	const std::string program_path = std::filesystem::absolute(argv[0]).parent_path().string();
 	const std::string log_file_path = program_path + "/logs/log.txt";
 	const size_t max_size = static_cast<size_t>(1048576 * 5);
@@ -91,6 +93,7 @@ int main(int argc, char* argv[]) {
 	const int time_mode = config_json_data["time_mode"];
 	const int time_interval = config_json_data["time_interval"];
 	const std::vector<std::string> timelist = config_json_data["timelist"];
+	const std::vector<std::string> titles = config_json_data["titles"];
 	logger->info("end reading json data");
 	if (time_mode == 0) {
 		while (true) {
@@ -100,7 +103,7 @@ int main(int argc, char* argv[]) {
 				}
 				return 1;
 			}
-			if (!get_video_and_upload(get_video_python_script_path, video_path, biliup_exe_path, cookie_json_path, tags, logger)) {
+			if (!get_video_and_upload(get_video_python_script_path, video_path, biliup_exe_path, cookie_json_path, tags, titles, logger)) {
 				logger->error("program failed, please submit issue to https://github.com/tnnnnt/MediaMule/issues");
 				return 3;
 			}
@@ -116,7 +119,7 @@ int main(int argc, char* argv[]) {
 				}
 				return 1;
 			}
-			if (!get_video_and_upload(get_video_python_script_path, video_path, biliup_exe_path, cookie_json_path, tags, logger)) {
+			if (!get_video_and_upload(get_video_python_script_path, video_path, biliup_exe_path, cookie_json_path, tags, titles, logger)) {
 				logger->error("program failed, please submit issue to https://github.com/tnnnnt/MediaMule/issues");
 				return 3;
 			}
